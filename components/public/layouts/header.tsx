@@ -8,7 +8,7 @@ export default function Header() {
     { name: "Contact", href: "/contact" },
   ];
   return (
-    <div className="sticky top-0 z-50 flex items-center justify-between gap-6 bg-slate-950/95 px-6 py-4 text-white shadow-lg shadow-slate-950/20 backdrop-blur-sm">
+    <div className="sticky top-0 z-50 flex items-center justify-between gap-6 bg-sky-900/95 px-6 py-4 text-white shadow-lg shadow-slate-950/20 backdrop-blur-sm">
       <div className="flex items-center gap-3">
         <Gift className="h-9 w-9 text-amber-500" />
         <h1 className="text-2xl font-semibold">Bahr Dar Gifts</h1>

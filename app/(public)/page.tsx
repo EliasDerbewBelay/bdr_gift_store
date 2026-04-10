@@ -5,7 +5,7 @@ import Testimonies from "@/components/public/sections/home/Testimonies";
 
 export default function HomePage() {
   return (
-    <section className="py-20 text-center">
+    <section>
       <HomeHero />
       <Collections />
       <FeaturedGifts />
