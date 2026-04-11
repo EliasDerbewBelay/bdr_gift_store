@@ -8,7 +8,7 @@ interface GiftCardProps {
   category: string;
   price: number;
   image: string;
-  badge: string;
+  badge?: string;
   onQuickView?: (id: number) => void;
   onAddToCart?: (id: number) => void;
   onWishlist?: (id: number) => void;
@@ -64,11 +64,13 @@ export default function GiftCard({
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
 
         {/* Category Badge */}
-        <div className="absolute top-3 left-3">
-          <span className="inline-block px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-full shadow-md">
-            {badge}
-          </span>
-        </div>
+        {badge && (
+          <div className="absolute top-3 left-3">
+            <span className="inline-block px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-full shadow-md">
+              {badge}
+            </span>
+          </div>
+        )}
 
         {/* Quick View Button - Appears on Hover */}
         <div className="absolute bottom-3 left-3 right-3">

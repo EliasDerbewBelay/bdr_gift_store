@@ -1,54 +1,33 @@
 "use client";
+import { useState } from "react";
 import { ArrowRight, Gift, Truck, Shield } from "lucide-react";
 import GiftCard from "@/components/ui/GiftCard";
+import QuickViewCard from "@/components/ui/QuickViewCard";
+import { MOCK_GIFTS, FEATURED_GIFTS_IDS } from "@/constants/gifts";
+import { Product } from "@/types/product";
 
 export default function FeaturedGifts() {
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Premium Chocolate Box",
-      category: "Luxury",
-      price: 49.99,
-      image:
-        "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=2070&auto=format&fit=crop",
-      badge: "Bestseller",
-    },
-    {
-      id: 2,
-      name: "Elegant Flower Bouquet",
-      category: "Floral",
-      price: 59.99,
-      image:
-        "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=2070&auto=format&fit=crop",
-      badge: "Popular",
-    },
-    {
-      id: 3,
-      name: "Luxury Spa Gift Set",
-      category: "Wellness",
-      price: 89.99,
-      image:
-        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=2070&auto=format&fit=crop",
-      badge: "Premium",
-    },
-    {
-      id: 4,
-      name: "Personalized Gift Box",
-      category: "Custom",
-      price: 39.99,
-      image:
-        "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2070&auto=format&fit=crop",
-      badge: "Trending",
-    },
-  ];
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const featuredProducts = MOCK_GIFTS.filter((gift) =>
+    FEATURED_GIFTS_IDS.includes(gift.id),
+  );
 
   const handleQuickView = (id: number) => {
-    console.log(`Quick view product ${id}`);
-    // Add your quick view logic here (open modal, navigate, etc.)
+    const product = MOCK_GIFTS.find((p) => p.id === id);
+    if (product) {
+      setSelectedProduct(product);
+      setIsQuickViewOpen(true);
+    }
   };
 
-  const handleAddToCart = (id: number) => {
-    console.log(`Add to cart product ${id}`);
+  const handleCloseQuickView = () => {
+    setIsQuickViewOpen(false);
+  };
+
+  const handleAddToCart = (id: number, quantity: number = 1) => {
+    console.log(`Add to cart: product ${id}, quantity ${quantity}`);
     // Add your add to cart logic here
   };
 
@@ -91,7 +70,7 @@ export default function FeaturedGifts() {
               image={product.image}
               badge={product.badge}
               onQuickView={handleQuickView}
-              onAddToCart={handleAddToCart}
+              onAddToCart={() => handleAddToCart(product.id)}
               onWishlist={handleWishlist}
             />
           ))}
@@ -144,6 +123,17 @@ export default function FeaturedGifts() {
           </button>
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      {selectedProduct && (
+        <QuickViewCard
+          isOpen={isQuickViewOpen}
+          onClose={handleCloseQuickView}
+          product={selectedProduct}
+          onAddToCart={handleAddToCart}
+          onWishlist={handleWishlist}
+        />
+      )}
     </section>
   );
 }

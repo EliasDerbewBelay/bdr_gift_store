@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Search,
   ChevronDown,
@@ -14,6 +14,9 @@ import {
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import GiftCard from "@/components/ui/GiftCard";
+import QuickViewCard from "@/components/ui/QuickViewCard";
+import { MOCK_GIFTS } from "@/constants/gifts";
+import { Product } from "@/types/product";
 
 export default function GiftsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -22,105 +25,16 @@ export default function GiftsPage() {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 500 });
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Sample products data
-  const products = [
-    {
-      id: 1,
-      name: "Premium Chocolate Box",
-      category: "Luxury",
-      price: 49.99,
-      image:
-        "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=2070&auto=format&fit=crop",
-      badge: "Bestseller",
-      description: "Handcrafted premium chocolates in an elegant gift box",
-    },
-    {
-      id: 2,
-      name: "Elegant Flower Bouquet",
-      category: "Floral",
-      price: 59.99,
-      image:
-        "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=2070&auto=format&fit=crop",
-      badge: "Popular",
-      description: "Beautiful fresh flower arrangement with same-day delivery",
-    },
-    {
-      id: 3,
-      name: "Luxury Spa Gift Set",
-      category: "Wellness",
-      price: 89.99,
-      image:
-        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=2070&auto=format&fit=crop",
-      badge: "Premium",
-      description:
-        "Complete spa experience with aromatherapy and bath essentials",
-    },
-    {
-      id: 4,
-      name: "Personalized Gift Box",
-      category: "Custom",
-      price: 39.99,
-      image:
-        "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2070&auto=format&fit=crop",
-      badge: "Trending",
-      description: "Fully customizable gift box with your personal message",
-    },
-    {
-      id: 5,
-      name: "Anniversary Special",
-      category: "Luxury",
-      price: 79.99,
-      image:
-        "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop",
-      badge: "New",
-      description:
-        "Romantic anniversary collection with champagne and chocolates",
-    },
-    {
-      id: 6,
-      name: "Birthday Surprise Box",
-      category: "Birthday",
-      price: 45.99,
-      image:
-        "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2070&auto=format&fit=crop",
-      badge: "Popular",
-      description:
-        "Fun and festive birthday collection with balloons and treats",
-    },
-    {
-      id: 7,
-      name: "Corporate Gift Hamper",
-      category: "Corporate",
-      price: 129.99,
-      image:
-        "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=1974&auto=format&fit=crop",
-      badge: "Premium",
-      description: "Professional gift hamper perfect for clients and employees",
-    },
-    {
-      id: 8,
-      name: "Holiday Special Box",
-      category: "Seasonal",
-      price: 69.99,
-      image:
-        "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=2070&auto=format&fit=crop",
-      badge: "Limited",
-      description:
-        "Festive holiday collection with seasonal treats and decorations",
-    },
-  ];
+  // Modal state
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-  const categories = [
-    "All",
-    "Luxury",
-    "Floral",
-    "Wellness",
-    "Custom",
-    "Birthday",
-    "Corporate",
-    "Seasonal",
-  ];
+  const categories = useMemo(() => {
+    const cats = ["All", ...new Set(MOCK_GIFTS.map((p) => p.category))];
+    return cats;
+  }, []);
 
   const sortOptions = [
     { value: "featured", label: "Featured" },
@@ -129,6 +43,33 @@ export default function GiftsPage() {
     { value: "newest", label: "Newest First" },
     { value: "popular", label: "Most Popular" },
   ];
+
+  // Filtering and Sorting Logic
+  const filteredProducts = useMemo(() => {
+    return MOCK_GIFTS.filter((product) => {
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(product.category);
+      const matchesPrice =
+        product.price >= priceRange.min && product.price <= priceRange.max;
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesCategory && matchesPrice && matchesSearch;
+    }).sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "popular":
+          return (b.reviews || 0) - (a.reviews || 0);
+        default:
+          return 0;
+      }
+    });
+  }, [selectedCategories, priceRange, sortBy, searchQuery]);
 
   const handleCategoryToggle = (category: string) => {
     if (category === "All") {
@@ -143,19 +84,27 @@ export default function GiftsPage() {
   };
 
   const handleQuickView = (id: number) => {
-    console.log(`Quick view product ${id}`);
+    const product = MOCK_GIFTS.find((p) => p.id === id);
+    if (product) {
+      setSelectedProduct(product);
+      setIsQuickViewOpen(true);
+    }
   };
 
-  const handleAddToCart = (id: number) => {
-    console.log(`Add to cart product ${id}`);
+  const handleAddToCart = (id: number, quantity: number = 1) => {
+    console.log(`Add to cart: product ${id}, quantity ${quantity}`);
   };
 
   const handleWishlist = (id: number) => {
     console.log(`Add to wishlist product ${id}`);
   };
 
+  const handleCloseQuickView = () => {
+    setIsQuickViewOpen(false);
+  };
+
   // List View Card Component
-  const ListViewCard = ({ product }: { product: (typeof products)[0] }) => (
+  const ListViewCard = ({ product }: { product: Product }) => (
     <div className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5">
         {/* Image */}
@@ -201,12 +150,14 @@ export default function GiftsPage() {
               <button
                 onClick={() => handleWishlist(product.id)}
                 className="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full flex items-center justify-center transition"
+                aria-label="Add to wishlist"
               >
                 <Heart className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleQuickView(product.id)}
                 className="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full flex items-center justify-center transition"
+                aria-label="Quick view"
               >
                 <Eye className="w-4 h-4" />
               </button>
@@ -262,6 +213,8 @@ export default function GiftsPage() {
             <input
               type="search"
               placeholder="Search gifts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
             />
           </div>
@@ -326,7 +279,7 @@ export default function GiftsPage() {
           <p className="text-sm text-slate-600">
             Showing{" "}
             <span className="font-medium text-slate-900">
-              {products.length}
+              {filteredProducts.length}
             </span>{" "}
             products
           </p>
@@ -423,55 +376,81 @@ export default function GiftsPage() {
 
           {/* Product Display */}
           <div className="flex-1">
-            {viewMode === "grid" ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-                {products.map((product) => (
-                  <GiftCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.name}
-                    category={product.category}
-                    price={product.price}
-                    image={product.image}
-                    badge={product.badge}
-                    onQuickView={handleQuickView}
-                    onAddToCart={handleAddToCart}
-                    onWishlist={handleWishlist}
-                  />
-                ))}
-              </div>
+            {filteredProducts.length > 0 ? (
+              viewMode === "grid" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                  {filteredProducts.map((product) => (
+                    <GiftCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      category={product.category}
+                      price={product.price}
+                      image={product.image}
+                      badge={product.badge}
+                      onQuickView={handleQuickView}
+                      onAddToCart={() => handleAddToCart(product.id)}
+                      onWishlist={handleWishlist}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredProducts.map((product) => (
+                    <ListViewCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )
             ) : (
-              <div className="space-y-4">
-                {products.map((product) => (
-                  <ListViewCard key={product.id} product={product} />
-                ))}
+              <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-slate-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  No products found
+                </h3>
+                <p className="text-slate-500">
+                  Try adjusting your filters or search query
+                </p>
+                <button
+                  onClick={() => {
+                    setSelectedCategories([]);
+                    setPriceRange({ min: 0, max: 500 });
+                    setSearchQuery("");
+                  }}
+                  className="mt-6 text-amber-600 font-semibold hover:text-amber-700"
+                >
+                  Clear all filters
+                </button>
               </div>
             )}
 
             {/* Pagination */}
-            <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2">
-              <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                <ChevronDown className="h-4 w-4 rotate-90" />
-              </button>
-
-              {[1, 2, 3, 4].map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition ${
-                    currentPage === page
-                      ? "bg-amber-500 text-white"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  }`}
-                >
-                  {page}
+            {filteredProducts.length > 0 && (
+              <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2">
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                  <ChevronDown className="h-4 w-4 rotate-90" />
                 </button>
-              ))}
 
-              <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                <ChevronDown className="h-4 w-4 -rotate-90" />
-              </button>
-            </div>
+                {[1, 2, 3, 4].map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition ${
+                      currentPage === page
+                        ? "bg-amber-500 text-white"
+                        : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                  <ChevronDown className="h-4 w-4 -rotate-90" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -581,6 +560,17 @@ export default function GiftsPage() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Quick View Modal */}
+      {selectedProduct && (
+        <QuickViewCard
+          isOpen={isQuickViewOpen}
+          onClose={handleCloseQuickView}
+          product={selectedProduct}
+          onAddToCart={handleAddToCart}
+          onWishlist={handleWishlist}
+        />
+      )}
     </div>
   );
 }
