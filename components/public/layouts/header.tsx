@@ -128,26 +128,26 @@ export default function Header() {
             </Link>
 
             {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex items-center gap-2 ml-2">
+            <div className="hidden md:flex items-center gap-3 ml-4">
               <Link
                 href="/signin"
-                className={`px-4 py-2 text-sm font-medium transition ${
+                className={`px-5 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 ${
                   isActive("/signin")
-                    ? "text-amber-500"
-                    : "text-white hover:text-amber-500"
+                    ? "text-amber-500 underline underline-offset-8"
+                    : "text-white/90 hover:text-amber-500"
                 }`}
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className={`px-4 py-2 text-sm font-medium rounded-full transition shadow-md hover:shadow-lg ${
+                className={`px-6 py-2.5 text-sm font-bold tracking-tight rounded-md transition-all duration-300 shadow-lg active:scale-95 ${
                   isActive("/signup")
-                    ? "bg-amber-600 text-white"
-                    : "bg-amber-500 hover:bg-amber-600 text-slate-950"
+                    ? "bg-amber-600 text-white ring-2 ring-amber-500/20"
+                    : "bg-amber-500 hover:bg-amber-600 text-slate-950 hover:shadow-amber-500/20"
                 }`}
               >
-                Sign Up
+                Join Now
               </Link>
             </div>
 
@@ -202,12 +202,12 @@ export default function Header() {
                 })}
 
                 {/* Mobile Auth Links */}
-                <li className="pt-4 mt-4 border-t border-white/10">
-                  <div className="space-y-2">
+                <li className="pt-6 mt-6 border-t border-white/20">
+                  <div className="flex flex-col gap-3">
                     <Link
                       href="/signin"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-3 text-center rounded-lg transition text-sm font-medium ${
+                      className={`block px-4 py-4 text-center rounded-lg transition-all text-sm font-bold tracking-widest uppercase ${
                         isActive("/signin")
                           ? "text-amber-500 bg-white/10"
                           : "text-white hover:bg-white/10"
@@ -218,13 +218,13 @@ export default function Header() {
                     <Link
                       href="/signup"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-3 text-center rounded-lg transition text-sm font-medium ${
+                      className={`block px-4 py-4 text-center rounded-lg transition-all shadow-lg active:scale-95 text-sm font-bold tracking-widest uppercase ${
                         isActive("/signup")
                           ? "bg-amber-600 text-white"
-                          : "bg-amber-500 hover:bg-amber-600 text-slate-950"
+                          : "bg-amber-500 text-slate-950"
                       }`}
                     >
-                      Sign Up
+                      Join The Circle
                     </Link>
                   </div>
                 </li>
