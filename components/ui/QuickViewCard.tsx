@@ -15,6 +15,7 @@ import {
   Share2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 interface QuickViewCardProps {
   isOpen: boolean;
@@ -51,6 +52,7 @@ export default function QuickViewCard({
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const { authenticatedAction } = useAuthGuard();
 
   const productImages = product.images || [product.image];
 
@@ -59,17 +61,21 @@ export default function QuickViewCard({
   };
 
   const handleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
-    if (onWishlist) {
-      onWishlist(product.id);
-    }
+    authenticatedAction(() => {
+      setIsWishlisted(!isWishlisted);
+      if (onWishlist) {
+        onWishlist(product.id);
+      }
+    });
   };
 
   const handleAddToCart = () => {
-    if (onAddToCart) {
-      onAddToCart(product.id, quantity);
-      onClose();
-    }
+    authenticatedAction(() => {
+      if (onAddToCart) {
+        onAddToCart(product.id, quantity);
+        onClose();
+      }
+    });
   };
 
   const discount = product.originalPrice

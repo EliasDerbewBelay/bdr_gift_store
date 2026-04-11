@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 interface GiftCardProps {
   id: number;
@@ -25,6 +26,7 @@ export default function GiftCard({
   onAddToCart,
   onWishlist,
 }: GiftCardProps) {
+  const { authenticatedAction } = useAuthGuard();
   const handleQuickView = () => {
     if (onQuickView) {
       onQuickView(id);
@@ -33,13 +35,13 @@ export default function GiftCard({
 
   const handleAddToCart = () => {
     if (onAddToCart) {
-      onAddToCart(id);
+      authenticatedAction(() => onAddToCart(id));
     }
   };
 
   const handleWishlist = () => {
     if (onWishlist) {
-      onWishlist(id);
+      authenticatedAction(() => onWishlist(id));
     }
   };
 

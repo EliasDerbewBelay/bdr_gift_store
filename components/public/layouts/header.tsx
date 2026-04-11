@@ -2,11 +2,14 @@
 import { useState } from "react";
 import { Gift, ShoppingCart, Heart, Menu, X, Search, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { authenticatedAction } = useAuthGuard();
 
   const NavLinks = [
     { name: "Home", href: "/" },
@@ -96,6 +99,10 @@ export default function Header() {
             {/* Wishlist */}
             <Link
               href="/wishlist"
+              onClick={(e) => {
+                e.preventDefault();
+                authenticatedAction(() => router.push("/wishlist"));
+              }}
               className="relative p-2 hover:bg-white/10 rounded-full transition group"
             >
               <Heart
@@ -113,6 +120,10 @@ export default function Header() {
             {/* Cart */}
             <Link
               href="/cart"
+              onClick={(e) => {
+                e.preventDefault();
+                authenticatedAction(() => router.push("/cart"));
+              }}
               className="relative p-2 hover:bg-white/10 rounded-full transition group"
             >
               <ShoppingCart
