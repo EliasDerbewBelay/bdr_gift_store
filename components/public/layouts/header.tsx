@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { Gift, ShoppingCart, Heart, Menu, X, Search, User } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const NavLinks = [
     { name: "Home", href: "/" },
@@ -12,6 +14,13 @@ export default function Header() {
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
+
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -52,17 +61,28 @@ export default function Header() {
           {/* Center Section - Desktop Navigation */}
           <nav className="hidden lg:block">
             <ul className="flex items-center gap-8">
-              {NavLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm font-medium uppercase tracking-wider text-white/90 hover:text-amber-500 transition relative group"
-                  >
-                    {link.name}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 transition-all group-hover:w-full" />
-                  </Link>
-                </li>
-              ))}
+              {NavLinks.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={`text-sm font-medium uppercase tracking-wider transition relative group ${
+                        active
+                          ? "text-amber-500"
+                          : "text-white/90 hover:text-amber-500"
+                      }`}
+                    >
+                      {link.name}
+                      <span
+                        className={`absolute -bottom-1 left-0 h-0.5 bg-amber-500 transition-all ${
+                          active ? "w-full" : "w-0 group-hover:w-full"
+                        }`}
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -74,35 +94,74 @@ export default function Header() {
             </button>
 
             {/* Wishlist */}
-            <button className="relative p-2 hover:bg-white/10 rounded-full transition group">
-              <Heart className="h-5 w-5 text-white group-hover:text-amber-500 transition" />
+            <Link
+              href="/wishlist"
+              className="relative p-2 hover:bg-white/10 rounded-full transition group"
+            >
+              <Heart
+                className={`h-5 w-5 transition ${
+                  isActive("/wishlist")
+                    ? "text-amber-500"
+                    : "text-white group-hover:text-amber-500"
+                }`}
+              />
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 0
               </span>
-            </button>
+            </Link>
 
             {/* Cart */}
-            <button className="relative p-2 hover:bg-white/10 rounded-full transition group">
-              <ShoppingCart className="h-5 w-5 text-white group-hover:text-amber-500 transition" />
+            <Link
+              href="/cart"
+              className="relative p-2 hover:bg-white/10 rounded-full transition group"
+            >
+              <ShoppingCart
+                className={`h-5 w-5 transition ${
+                  isActive("/cart")
+                    ? "text-amber-500"
+                    : "text-white group-hover:text-amber-500"
+                }`}
+              />
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 0
               </span>
-            </button>
+            </Link>
 
             {/* Desktop Auth Buttons */}
             <div className="hidden md:flex items-center gap-2 ml-2">
-              <button className="px-4 py-2 text-sm font-medium text-white hover:text-amber-500 transition">
+              <Link
+                href="/signin"
+                className={`px-4 py-2 text-sm font-medium transition ${
+                  isActive("/signin")
+                    ? "text-amber-500"
+                    : "text-white hover:text-amber-500"
+                }`}
+              >
                 Sign In
-              </button>
-              <button className="px-4 py-2 text-sm font-medium bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-full transition shadow-md hover:shadow-lg">
+              </Link>
+              <Link
+                href="/signup"
+                className={`px-4 py-2 text-sm font-medium rounded-full transition shadow-md hover:shadow-lg ${
+                  isActive("/signup")
+                    ? "bg-amber-600 text-white"
+                    : "bg-amber-500 hover:bg-amber-600 text-slate-950"
+                }`}
+              >
                 Sign Up
-              </button>
+              </Link>
             </div>
 
             {/* Mobile User Menu */}
-            <button className="md:hidden p-2 hover:bg-white/10 rounded-full transition">
-              <User className="h-5 w-5 text-white" />
-            </button>
+            <Link
+              href="/account"
+              className="md:hidden p-2 hover:bg-white/10 rounded-full transition"
+            >
+              <User
+                className={`h-5 w-5 ${
+                  isActive("/account") ? "text-amber-500" : "text-white"
+                }`}
+              />
+            </Link>
           </div>
         </div>
 
@@ -123,17 +182,24 @@ export default function Header() {
           <div className="lg:hidden border-t border-white/10 bg-sky-900/98">
             <nav className="px-4 py-4">
               <ul className="space-y-1">
-                {NavLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 text-white/90 hover:text-amber-500 hover:bg-white/5 rounded-lg transition text-sm font-medium uppercase tracking-wider"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
+                {NavLinks.map((link) => {
+                  const active = isActive(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-3 rounded-lg transition text-sm font-medium uppercase tracking-wider ${
+                          active
+                            ? "text-amber-500 bg-white/10"
+                            : "text-white/90 hover:text-amber-500 hover:bg-white/5"
+                        }`}
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  );
+                })}
 
                 {/* Mobile Auth Links */}
                 <li className="pt-4 mt-4 border-t border-white/10">
@@ -141,14 +207,22 @@ export default function Header() {
                     <Link
                       href="/signin"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 text-center text-white hover:bg-white/10 rounded-lg transition text-sm font-medium"
+                      className={`block px-4 py-3 text-center rounded-lg transition text-sm font-medium ${
+                        isActive("/signin")
+                          ? "text-amber-500 bg-white/10"
+                          : "text-white hover:bg-white/10"
+                      }`}
                     >
                       Sign In
                     </Link>
                     <Link
                       href="/signup"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 text-center bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg transition text-sm font-medium"
+                      className={`block px-4 py-3 text-center rounded-lg transition text-sm font-medium ${
+                        isActive("/signup")
+                          ? "bg-amber-600 text-white"
+                          : "bg-amber-500 hover:bg-amber-600 text-slate-950"
+                      }`}
                     >
                       Sign Up
                     </Link>
