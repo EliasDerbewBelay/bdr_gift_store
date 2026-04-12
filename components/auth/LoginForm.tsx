@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Lock, ArrowRight } from "lucide-react";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
@@ -33,20 +33,14 @@ export default function LoginForm() {
         email: formData.email,
         password: formData.password,
         redirect: false,
+        callbackUrl: "/",
       });
 
       if (result?.error) {
         setError(result.error);
         setIsLoading(false);
       } else {
-        const session = await getSession();
-
-        if (session?.user?.role === "ADMIN") {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
-
+        router.push(result?.url ?? "/");
         router.refresh();
       }
     } catch (err) {
