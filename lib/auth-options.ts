@@ -26,11 +26,12 @@ export const authOptions: NextAuthOptions = {
         if (credentials.email === "bahrdar@gmail.com" && credentials.password === "admin123!") {
           return {
             id: "admin-id",
-            name: "Admin",
+            name: "BDR Administrator",
             email: "bahrdar@gmail.com",
             role: "ADMIN",
           };
         }
+
 
         // Database Lookup for regular users
         const user = await prisma.user.findUnique({

@@ -61,7 +61,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                   <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
                     <Phone size={16} />
                   </div>
-                  <span className="text-sm font-semibold">{order.phone}</span>
+                  <span className="text-sm font-semibold">{order.customerPhone || order.phone}</span>
                 </div>
               </div>
             </div>
@@ -69,7 +69,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
             <div className="space-y-4">
               <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Order Status</h4>
               <div className="flex items-center gap-3">
-                <StatusBadge status={order.status} className="px-4 py-2 text-sm" />
+                <StatusBadge status={order.status.toLowerCase() as any} className="px-4 py-2 text-sm" />
                 <button className="text-xs font-bold text-indigo-600 hover:underline">Change Status</button>
               </div>
             </div>
@@ -85,8 +85,8 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                 <img src={order.productImage || "https://placehold.co/100"} alt="" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div>
-                <h5 className="font-bold text-slate-800">{order.product}</h5>
-                <p className="text-xs text-slate-500 mt-1 capitalize">{order.category || "Gift Category"}</p>
+                <h5 className="font-bold text-slate-800">{order.productName || order.product?.title || order.product}</h5>
+                <p className="text-xs text-slate-500 mt-1 capitalize">{order.category?.name || "Gift Category"}</p>
               </div>
               <div className="ml-auto text-right">
                 <p className="text-sm font-bold text-slate-800">{order.price || "N/A"}</p>

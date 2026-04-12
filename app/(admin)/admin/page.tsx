@@ -1,10 +1,7 @@
-"use client";
-
 import React from "react";
 import StatsCard from "@/components/admin/StatsCard";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge from "@/components/admin/StatusBadge";
-import { cn } from "@/lib/utils";
 import { 
   ShoppingBag, 
   Package, 
@@ -15,38 +12,58 @@ import {
   Plus
 } from "lucide-react";
 import Link from "next/link";
+import { getDashboardStats, getRecentOrders } from "@/lib/actions/admin";
 
-// Mock Data
-const stats = [
-  { label: "Total Orders", value: "128", icon: ShoppingBag, trend: { value: "12", isUp: true } },
-  { label: "Total Products", value: "45", icon: Package, trend: { value: "5", isUp: true } },
-  { label: "Total Users", value: "842", icon: Users, trend: { value: "3", isUp: true } },
-];
+export default async function DashboardPage() {
+  const [stats, recentOrdersRaw] = await Promise.all([
+    getDashboardStats(),
+    getRecentOrders(5)
+  ]);
 
-const recentOrders = [
-  { id: "1", customerName: "Elias Belay", product: "Luxury Rose Box", status: "pending", date: "2026-04-12 14:30", price: "$85.00" },
-  { id: "2", customerName: "Sara Johnson", product: "Gourmet Hamper", status: "completed", date: "2026-04-12 12:15", price: "$120.00" },
-  { id: "3", customerName: "Michael Chen", product: "Personalized Mug", status: "pending", date: "2026-04-12 10:45", price: "$25.00" },
-  { id: "4", customerName: "Amana K.", product: "Birthday Surprise", status: "completed", date: "2026-04-11 18:20", price: "$55.00" },
-  { id: "5", customerName: "James Wilson", product: "Wedding Gift Set", status: "completed", date: "2026-04-11 16:00", price: "$150.00" },
-];
+  // Map icons to stats (icons lost in transition from server action)
+  const iconMap: Record<string, any> = {
+    "Total Orders": ShoppingBag,
+    "Total Products": Package,
+    "Total Users": Users,
+  };
 
-export default function DashboardPage() {
+  const formattedStats = stats.map(s => ({
+    ...s,
+    icon: iconMap[s.label] || Package
+  }));
+
+  // Format orders for table
+  const recentOrders = recentOrdersRaw.map(order => ({
+    id: order.id,
+    customerName: order.customerName,
+    product: order.product.title,
+    status: order.status.toLowerCase(),
+    date: new Date(order.createdAt).toLocaleDateString(),
+  }));
+
+  const pendingCount = recentOrdersRaw.filter(o => o.status === "PENDING").length;
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Welcome Banner */}
       <div className="relative overflow-hidden p-8 rounded-3xl bg-linear-to-br from-indigo-600 to-purple-700 text-white border border-indigo-500/20 shadow-xl shadow-indigo-100/50">
-        <div className="relative z-10 max-w-2xl text-left">
+        <div className="relative z-10 max-w-2xl text-left text-left">
           <h2 className="text-3xl font-bold tracking-tight mb-2">Welcome back, Admin! 👋</h2>
-          <p className="text-indigo-100 text-lg font-medium opacity-90">Here's what's happening with your store today. You have <span className="text-white font-bold underline decoration-indigo-300 underline-offset-4 pointer-events-none">3 pending orders</span> that need your attention.</p>
+          <p className="text-indigo-100 text-lg font-medium opacity-90 text-left">
+            Here's what's happening with your store today. 
+            {pendingCount > 0 ? (
+              <> You have <span className="text-white font-bold underline decoration-indigo-300 underline-offset-4 pointer-events-none">{pendingCount} pending orders</span> that need your attention.</>
+            ) : (
+              <> Everything is up to date!</>
+            )}
+          </p>
         </div>
-        {/* Decorative background circle */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, i) => (
+        {formattedStats.map((stat, i) => (
           <StatsCard 
             key={i} 
             {...stat} 
@@ -85,11 +102,11 @@ export default function DashboardPage() {
                   <span className="text-sm font-semibold text-slate-800">{order.customerName}</span>
                 </div>
               </td>
-              <td className="px-6 py-4 text-sm font-medium text-slate-600">{order.product}</td>
-              <td className="px-6 py-4">
+              <td className="px-6 py-4 text-sm font-medium text-slate-600 text-left">{order.product}</td>
+              <td className="px-6 py-4 text-left">
                 <StatusBadge status={order.status as any} />
               </td>
-              <td className="px-6 py-4 text-xs font-medium text-slate-400">{order.date}</td>
+              <td className="px-6 py-4 text-xs font-medium text-slate-400 text-left">{order.date}</td>
             </tr>
           )}
         />
@@ -98,19 +115,19 @@ export default function DashboardPage() {
       {/* Quick Actions / Other Info */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
-          <h3 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4">Quick Actions</h3>
+          <h3 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4 text-left">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-4">
             <Link href="/admin/products" className="flex flex-col gap-3 p-5 rounded-2xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-100 border border-slate-50 transition-all group">
               <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
                 <Plus size={24} />
               </div>
-              <span className="text-sm font-bold text-slate-700">Add New Product</span>
+              <span className="text-sm font-bold text-slate-700 text-left">Add New Product</span>
             </Link>
             <Link href="/admin/analytics" className="flex flex-col gap-3 p-5 rounded-2xl bg-slate-50 hover:bg-emerald-50 hover:border-emerald-100 border border-slate-50 transition-all group">
               <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
                 <TrendingUp size={24} />
               </div>
-              <span className="text-sm font-bold text-slate-700">Analytics Reports</span>
+              <span className="text-sm font-bold text-slate-700 text-left">Analytics Reports</span>
             </Link>
           </div>
         </div>
@@ -119,7 +136,7 @@ export default function DashboardPage() {
           <h3 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4 text-left">Store Health</h3>
           <div className="space-y-6 pt-2">
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                 <span>Monthly Goal Progress</span>
                 <span className="text-slate-700">78%</span>
               </div>
@@ -128,7 +145,7 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 text-left">
               <div className="w-14 h-14 rounded-full border-4 border-indigo-50 border-t-indigo-500 flex items-center justify-center relative">
                 <span className="text-xs font-bold text-slate-700">92%</span>
               </div>
