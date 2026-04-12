@@ -4,9 +4,12 @@ import { Gift, ShoppingCart, Heart, Menu, X, Search, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
   const { authenticatedAction } = useAuthGuard();
@@ -23,6 +26,12 @@ export default function Header() {
       return pathname === "/";
     }
     return pathname.startsWith(href);
+  };
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/");
+    router.refresh();
   };
 
   return (
@@ -138,41 +147,96 @@ export default function Header() {
               </span>
             </Link>
 
-            {/* Desktop Auth Buttons */}
+            {/* Desktop Auth Section */}
             <div className="hidden md:flex items-center gap-3 ml-4">
-              <Link
-                href="/signin"
-                className={`px-5 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 ${
-                  isActive("/signin")
-                    ? "text-amber-500 underline underline-offset-8"
-                    : "text-white/90 hover:text-amber-500"
-                }`}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className={`px-6 py-2.5 text-sm font-bold tracking-tight rounded-md transition-all duration-300 shadow-lg active:scale-95 ${
-                  isActive("/signup")
-                    ? "bg-amber-600 text-white ring-2 ring-amber-500/20"
-                    : "bg-amber-500 hover:bg-amber-600 text-slate-950 hover:shadow-amber-500/20"
-                }`}
-              >
-                Join Now
-              </Link>
+              {status === "authenticated" ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition group border border-white/10"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-xs">
+                      {session?.user?.name?.charAt(0) || "U"}
+                    </div>
+                    <span className="text-sm font-medium text-white max-w-[120px] truncate">
+                      {session?.user?.name}
+                    </span>
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-3 w-56 bg-sky-950 border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="p-4 border-b border-white/5 bg-white/5">
+                        <p className="text-[10px] text-amber-500 font-bold uppercase tracking-widest mb-1">Signed in as</p>
+                        <p className="text-sm text-white font-medium truncate">{session?.user?.email}</p>
+                      </div>
+                      <div className="p-2">
+                        <Link
+                          href="/account"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition"
+                        >
+                          <User className="h-4 w-4" />
+                          My Account
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition"
+                        >
+                          <X className="h-4 w-4" />
+                          Log Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/signin"
+                    className={`px-5 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 ${
+                      isActive("/signin")
+                        ? "text-amber-500 underline underline-offset-8"
+                        : "text-white/90 hover:text-amber-500"
+                    }`}
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={`px-6 py-2.5 text-sm font-bold tracking-tight rounded-md transition-all duration-300 shadow-lg active:scale-95 ${
+                      isActive("/signup")
+                        ? "bg-amber-600 text-white ring-2 ring-amber-500/20"
+                        : "bg-amber-500 hover:bg-amber-600 text-slate-950 hover:shadow-amber-500/20"
+                    }`}
+                  >
+                    Join Now
+                  </Link>
+                </>
+              )}
             </div>
 
-            {/* Mobile User Menu */}
-            <Link
-              href="/account"
-              className="md:hidden p-2 hover:bg-white/10 rounded-full transition"
-            >
-              <User
-                className={`h-5 w-5 ${
-                  isActive("/account") ? "text-amber-500" : "text-white"
-                }`}
-              />
-            </Link>
+            {/* Mobile User/Menu Trigger */}
+            {status === "authenticated" ? (
+               <Link
+               href="/account"
+               className="md:hidden p-2 hover:bg-white/10 rounded-full transition"
+             >
+               <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-xs ring-2 ring-white/10">
+                 {session?.user?.name?.charAt(0) || "U"}
+               </div>
+             </Link>
+            ) : (
+              <Link
+                href="/account"
+                className="md:hidden p-2 hover:bg-white/10 rounded-full transition"
+              >
+                <User
+                  className={`h-5 w-5 ${
+                    isActive("/account") ? "text-amber-500" : "text-white"
+                  }`}
+                />
+              </Link>
+            )}
           </div>
         </div>
 
@@ -215,28 +279,52 @@ export default function Header() {
                 {/* Mobile Auth Links */}
                 <li className="pt-6 mt-6 border-t border-white/20">
                   <div className="flex flex-col gap-3">
-                    <Link
-                      href="/signin"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-4 text-center rounded-lg transition-all text-sm font-bold tracking-widest uppercase ${
-                        isActive("/signin")
-                          ? "text-amber-500 bg-white/10"
-                          : "text-white hover:bg-white/10"
-                      }`}
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-4 text-center rounded-lg transition-all shadow-lg active:scale-95 text-sm font-bold tracking-widest uppercase ${
-                        isActive("/signup")
-                          ? "bg-amber-600 text-white"
-                          : "bg-amber-500 text-slate-950"
-                      }`}
-                    >
-                      Join The Circle
-                    </Link>
+                    {status === "authenticated" ? (
+                      <>
+                        <div className="px-4 py-2">
+                          <p className="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Signed in as</p>
+                          <p className="text-sm text-white font-medium truncate">{session?.user?.email}</p>
+                        </div>
+                        <Link
+                          href="/account"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="block px-4 py-4 text-center rounded-lg transition-all text-sm font-bold tracking-widest uppercase text-white hover:bg-white/10"
+                        >
+                          My Account
+                        </Link>
+                        <button
+                          onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                          className="block w-full px-4 py-4 text-center rounded-lg transition-all text-sm font-bold tracking-widest uppercase bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                        >
+                          Log Out
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href="/signin"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`block px-4 py-4 text-center rounded-lg transition-all text-sm font-bold tracking-widest uppercase ${
+                            isActive("/signin")
+                              ? "text-amber-500 bg-white/10"
+                              : "text-white hover:bg-white/10"
+                          }`}
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          href="/signup"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`block px-4 py-4 text-center rounded-lg transition-all shadow-lg active:scale-95 text-sm font-bold tracking-widest uppercase ${
+                            isActive("/signup")
+                              ? "bg-amber-600 text-white"
+                              : "bg-amber-500 text-slate-950"
+                          }`}
+                        >
+                          Join The Circle
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </li>
               </ul>

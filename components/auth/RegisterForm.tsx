@@ -4,11 +4,15 @@ import Link from "next/link";
 import { Mail, Lock, User, ArrowRight, Phone } from "lucide-react";
 import Image from "next/image";
 
+import { registerUser } from "@/lib/actions/auth";
+import { useRouter } from "next/navigation";
+
 interface RegisterFormProps {
   onSwitchToLogin?: () => void;
 }
 
 export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,6 +22,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
     acceptTerms: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -29,24 +34,41 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Register:", formData);
+    try {
+      const result = await registerUser(formData);
+      
+      if (result.error) {
+        setError(result.error);
+        setIsLoading(false);
+      } else {
+        // Success
+        console.log("Registered successfully:", result.user);
+        // Switch to login tab
+        if (onSwitchToLogin) onSwitchToLogin();
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
     <>
       <form className="space-y-4" onSubmit={handleSubmit}>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-xs font-medium">
+            {error}
+          </div>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label
