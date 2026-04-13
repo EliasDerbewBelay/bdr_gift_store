@@ -21,7 +21,7 @@ interface QuickViewCardProps {
   isOpen: boolean;
   onClose: () => void;
   product: {
-    id: number;
+    id: string;
     name: string;
     category: string;
     price: number;
@@ -38,8 +38,8 @@ interface QuickViewCardProps {
     features?: string[];
     images?: string[];
   };
-  onAddToCart?: (id: number, quantity: number) => void;
-  onWishlist?: (id: number) => void;
+  onAddToCart?: (id: string, quantity: number) => void;
+  onWishlist?: (id: string) => void;
 }
 
 export default function QuickViewCard({

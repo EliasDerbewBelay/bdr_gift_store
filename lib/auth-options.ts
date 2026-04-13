@@ -23,7 +23,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Hardcoded Admin Check
-        if (credentials.email === "bahrdar@gmail.com" && credentials.password === "admin123!") {
+        if (
+          credentials.email === "bahrdar@gmail.com" &&
+          credentials.password === "admin123!"
+        ) {
           return {
             id: "admin-id",
             name: "BDR Administrator",
@@ -31,7 +34,6 @@ export const authOptions: NextAuthOptions = {
             role: "ADMIN",
           };
         }
-
 
         // Database Lookup for regular users
         const user = await prisma.user.findUnique({
@@ -44,7 +46,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No user found with this email");
         }
 
-        const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+        const isPasswordCorrect = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
 
         if (!isPasswordCorrect) {
           throw new Error("Invalid password");
@@ -71,12 +76,6 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).role = token.role;
       }
       return session;
-    },
-    async redirect({ url, baseUrl, token }) {
-      if (token?.role === "ADMIN") {
-        return `${baseUrl}/admin`;
-      }
-      return baseUrl;
     },
   },
 };

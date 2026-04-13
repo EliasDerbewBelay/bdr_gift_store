@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Upload, Plus, ChevronDown } from "lucide-react";
+import { X, Upload, Plus, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { uploadToCloudinary } from "@/lib/actions/upload";
 
 interface ProductFormProps {
   initialData?: any;
@@ -16,24 +17,40 @@ const categories = ["Gift Boxes", "Flower Bouquets", "Personalized Gifts", "Luxu
 export default function ProductForm({ initialData, onSave, onCancel, isLoading }: ProductFormProps) {
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
-    category: initialData?.category || categories[0],
+    category: initialData?.categoryName || initialData?.category?.name || categories[0],
     description: initialData?.description || "",
     price: initialData?.price || "",
     packagingStyle: initialData?.packagingStyle || "",
   });
 
   const [images, setImages] = useState<string[]>(initialData?.images || []);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Mock image upload for UI
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const newImage = URL.createObjectURL(e.target.files[0]);
-      setImages(prev => [...prev, newImage]);
+      setIsUploading(true);
+      try {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const result = await uploadToCloudinary(formData);
+        if (result.success && result.url) {
+          setImages(prev => [...prev, result.url!]);
+        } else {
+          alert(result.error || "Failed to upload image");
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("An error occurred during upload");
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -43,11 +60,12 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploading) return;
     onSave({ ...formData, images });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Main Info */}
         <div className="lg:col-span-2 space-y-6">
@@ -92,6 +110,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
                     <input
                       type="number"
+                      step="0.01"
                       name="price"
                       value={formData.price}
                       onChange={handleChange}
@@ -160,18 +179,33 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                 ))}
                 
                 {images.length < 5 && (
-                  <label className="relative aspect-square rounded-xl border-2 border-dashed border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all text-slate-400 hover:text-indigo-600">
-                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-100">
-                      <Plus size={20} />
-                    </div>
-                    <span className="text-xs font-semibold">Add Image</span>
-                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                  <label className={cn(
+                    "relative aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-all",
+                    isUploading ? "border-slate-200 bg-slate-50 cursor-not-allowed" : "border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 text-slate-400 hover:text-indigo-600"
+                  )}>
+                    {isUploading ? (
+                      <Loader2 size={24} className="animate-spin text-indigo-600" />
+                    ) : (
+                      <>
+                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center">
+                          <Plus size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">Add Image</span>
+                      </>
+                    )}
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*" 
+                      onChange={handleImageUpload} 
+                      disabled={isUploading}
+                    />
                   </label>
                 )}
               </div>
               
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <div className="flex gap-3">
+                <div className="flex gap-3 text-left">
                   <Upload size={18} className="text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-slate-700">Drop images here</p>
@@ -185,10 +219,11 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
           {/* Action Buttons */}
           <div className="flex flex-col gap-3">
             <button
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
               type="submit"
-              className="w-full py-4 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-200 transition-all active:scale-98 disabled:opacity-50"
+              className="w-full py-4 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-200 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
             >
+              {(isLoading) && <Loader2 size={18} className="animate-spin" />}
               {isLoading ? "Saving..." : "Save Product"}
             </button>
             <button

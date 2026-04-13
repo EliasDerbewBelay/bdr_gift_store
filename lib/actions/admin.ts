@@ -62,7 +62,7 @@ export async function getCategories() {
  */
 export async function upsertProduct(data: any) {
   try {
-    const { id, title, description, price, categoryName, images } = data;
+    const { id, title, description, price, packagingStyle, categoryName, images } = data;
 
     const category = await prisma.category.upsert({
       where: { name: categoryName },
@@ -74,12 +74,15 @@ export async function upsertProduct(data: any) {
       title,
       description,
       price: price ? parseFloat(price) : null,
+      packagingStyle,
       categoryId: category.id,
     };
 
     let product;
 
     if (id) {
+      // For updates, we delete old images and create new ones
+      // This is a simple strategy. A more complex one would be to diff them.
       product = await prisma.product.update({
         where: { id },
         data: {
@@ -103,6 +106,7 @@ export async function upsertProduct(data: any) {
 
     revalidatePath("/admin/products");
     revalidatePath("/admin");
+    revalidatePath("/gifts");
     return { success: true, product };
   } catch (error) {
     console.error("Failed to upsert product:", error);
@@ -115,11 +119,13 @@ export async function upsertProduct(data: any) {
  */
 export async function deleteProduct(id: string) {
   try {
+    // Note: ProductImage has onDelete: Cascade, so they will be deleted from DB automatically
     await prisma.product.delete({
       where: { id },
     });
     revalidatePath("/admin/products");
     revalidatePath("/admin");
+    revalidatePath("/gifts");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete product:", error);

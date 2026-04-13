@@ -4,15 +4,15 @@ import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 interface GiftCardProps {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: number;
   image: string;
   badge?: string;
-  onQuickView?: (id: number) => void;
-  onAddToCart?: (id: number) => void;
-  onWishlist?: (id: number) => void;
+  onQuickView?: (id: string) => void;
+  onAddToCart?: (id: string) => void;
+  onWishlist?: (id: string) => void;
 }
 
 export default function GiftCard({
