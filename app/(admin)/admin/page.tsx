@@ -47,7 +47,7 @@ export default async function DashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Welcome Banner */}
       <div className="relative overflow-hidden p-8 rounded-3xl bg-linear-to-br from-indigo-600 to-purple-700 text-white border border-indigo-500/20 shadow-xl shadow-indigo-100/50">
-        <div className="relative z-10 max-w-2xl text-left text-left">
+        <div className="relative z-10 max-w-2xl text-left">
           <h2 className="text-3xl font-bold tracking-tight mb-2">Welcome back, Admin! 👋</h2>
           <p className="text-indigo-100 text-lg font-medium opacity-90 text-left">
             Here's what's happening with your store today. 

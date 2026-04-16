@@ -31,7 +31,7 @@ export default function OrderManagement({ initialOrders }: OrderManagementProps)
         productName: order.product.title,
         productImage: order.product.images[0]?.url,
         date: new Date(order.createdAt).toLocaleString(),
-        price: order.product.price ? `$${order.product.price.toFixed(2)}` : "N/A"
+        price: order.product.price ? `ETB ${order.product.price.toLocaleString()}` : "N/A"
     };
     setSelectedOrder(normalizedOrder);
     setIsModalOpen(true);

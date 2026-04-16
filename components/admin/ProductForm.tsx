@@ -107,7 +107,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700">Price (Optional)</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px]">ETB</span>
                     <input
                       type="number"
                       step="0.01"

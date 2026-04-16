@@ -146,7 +146,7 @@ export default function GiftsContent({ initialProducts, initialCategories }: Gif
 
           <div className="flex items-center justify-between mt-auto">
             <span className="text-2xl font-black text-slate-900">
-              {product.price ? `$${product.price}` : "FREE"}
+              {product.price ? `ETB ${product.price.toLocaleString()}` : "FREE"}
             </span>
 
             <div className="flex items-center gap-2">
@@ -303,7 +303,7 @@ export default function GiftsContent({ initialProducts, initialCategories }: Gif
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">ETB</span>
                       <input
                         type="number"
                         value={priceRange.min}
@@ -319,7 +319,7 @@ export default function GiftsContent({ initialProducts, initialCategories }: Gif
                     </div>
                     <span className="text-slate-300">-</span>
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">ETB</span>
                       <input
                         type="number"
                         value={priceRange.max}
@@ -462,7 +462,7 @@ export default function GiftsContent({ initialProducts, initialCategories }: Gif
                   <h3 className="text-base font-bold text-slate-900 mb-5">Price Range</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px]">ETB</span>
                       <input
                         type="number"
                         value={priceRange.min}
@@ -477,7 +477,7 @@ export default function GiftsContent({ initialProducts, initialCategories }: Gif
                       />
                     </div>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px]">ETB</span>
                       <input
                         type="number"
                         value={priceRange.max}

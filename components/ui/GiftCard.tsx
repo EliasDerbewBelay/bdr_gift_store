@@ -110,7 +110,7 @@ export default function GiftCard({
 
         {/* Price and Add to Cart */}
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-slate-900">${price}</span>
+          <span className="text-2xl font-bold text-slate-900">ETB {price.toLocaleString()}</span>
 
           {/* Add to Cart Button */}
           <button

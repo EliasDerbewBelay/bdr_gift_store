@@ -223,11 +223,11 @@ export default function QuickViewCard({
                     {/* Price */}
                     <div className="flex items-baseline gap-3">
                       <span className="text-3xl font-bold text-slate-900">
-                        ${product.price}
+                        ETB {product.price.toLocaleString()}
                       </span>
                       {product.originalPrice && (
                         <span className="text-lg text-slate-400 line-through">
-                          ${product.originalPrice}
+                          ETB {product.originalPrice.toLocaleString()}
                         </span>
                       )}
                     </div>

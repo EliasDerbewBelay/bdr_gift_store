@@ -161,7 +161,7 @@ export default function ProductManagement({ initialProducts, categories }: Produ
               <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{product.category.name}</span>
             </td>
             <td className="px-6 py-5 text-sm font-bold text-slate-700">
-              {product.price ? `$${product.price.toFixed(2)}` : "FREE"}
+              {product.price ? `ETB ${product.price.toLocaleString()}` : "FREE"}
             </td>
             <td className="px-6 py-5">
               <div className="flex items-center gap-2">

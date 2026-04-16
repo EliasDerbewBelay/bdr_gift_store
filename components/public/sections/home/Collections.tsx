@@ -8,7 +8,7 @@ export default function Collections() {
       id: 1,
       title: "Luxury Gift Boxes",
       description: "Premium curated selections",
-      price: "From $89.99",
+      price: "From ETB 899",
       image:
         "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=2070&auto=format&fit=crop",
       items: "12 items",
@@ -19,7 +19,7 @@ export default function Collections() {
       id: 2,
       title: "Birthday Specials",
       description: "Celebrate with style",
-      price: "From $49.99",
+      price: "From ETB 499",
       image:
         "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2070&auto=format&fit=crop",
       items: "8 items",
@@ -30,7 +30,7 @@ export default function Collections() {
       id: 3,
       title: "Wedding Collection",
       description: "Elegant wedding gifts",
-      price: "From $129.99",
+      price: "From ETB 1,299",
       image:
         "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=1974&auto=format&fit=crop",
       items: "15 items",
@@ -41,7 +41,7 @@ export default function Collections() {
       id: 4,
       title: "Anniversary Gifts",
       description: "Timeless treasures",
-      price: "From $69.99",
+      price: "From ETB 699",
       image:
         "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop",
       items: "10 items",
@@ -52,7 +52,7 @@ export default function Collections() {
       id: 5,
       title: "Seasonal Specials",
       description: "Limited time offers",
-      price: "From $39.99",
+      price: "From ETB 399",
       image:
         "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2070&auto=format&fit=crop",
       items: "6 items",

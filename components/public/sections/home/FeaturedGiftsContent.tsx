@@ -90,7 +90,7 @@ export default function FeaturedGiftsContent({ products }: FeaturedGiftsContentP
               <h4 className="font-semibold text-slate-900 text-sm">
                 Free Shipping
               </h4>
-              <p className="text-xs text-slate-600">On orders over $50</p>
+              <p className="text-xs text-slate-600">On orders over ETB 1,000</p>
             </div>
           </div>
 
