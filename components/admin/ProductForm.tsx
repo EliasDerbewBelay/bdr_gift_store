@@ -114,7 +114,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
           {/* Main Attributes Section */}
           <div className="lg:col-span-3 space-y-8">
             <div className="space-y-6">
@@ -123,7 +123,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                  <h3 className="text-xl font-black text-slate-900 tracking-tight">Core Attributes</h3>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm">
+              <div className="grid grid-cols-1 gap-6 p-4 sm:p-6 md:p-8 rounded-2xl lg:rounded-[2rem] bg-white border border-slate-100 shadow-sm">
                 <FormField
                   control={form.control}
                   name="title"
@@ -149,7 +149,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400">Classification Sector</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 font-black text-[10px] uppercase tracking-widest px-4 focus:ring-primary/10">
                               <SelectValue placeholder="Select Sector" />
@@ -218,7 +218,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                  <div className="h-4 w-1 bg-secondary rounded-full" />
                  <h3 className="text-xl font-black text-slate-900 tracking-tight">Presentation Detail</h3>
               </div>
-              <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm">
+              <div className="p-4 sm:p-6 md:p-8 rounded-2xl lg:rounded-[2rem] bg-white border border-slate-100 shadow-sm">
                 <FormField
                   control={form.control}
                   name="packagingStyle"
@@ -254,7 +254,7 @@ export default function ProductForm({ initialData, onSave, onCancel, isLoading }
                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{images.length} / 5</span>
               </div>
 
-              <div className="p-6 rounded-[2rem] bg-white border border-slate-100 shadow-sm space-y-6">
+              <div className="p-4 sm:p-6 rounded-2xl lg:rounded-[2rem] bg-white border border-slate-100 shadow-sm space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <AnimatePresence>
                     {images.map((img, idx) => (

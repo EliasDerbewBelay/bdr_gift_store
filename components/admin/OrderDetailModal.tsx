@@ -27,10 +27,10 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
-        <div className="max-h-[90vh] overflow-y-auto scrollbar-hide">
+      <DialogContent className="sm:max-w-[calc(100%-2rem)] md:max-w-[90vw] lg:max-w-4xl p-0 overflow-hidden border-none rounded-3xl lg:rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
+        <div className="max-h-[95vh] overflow-y-auto scrollbar-hide">
            {/* Header with Luxury Banner */}
-           <div className="relative h-32 bg-slate-950 flex items-center px-10 overflow-hidden">
+           <div className="relative h-24 sm:h-32 bg-slate-950 flex items-center px-4 sm:px-6 md:px-10 overflow-hidden">
               <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12">
                  <Receipt className="h-40 w-40 text-white" />
               </div>
@@ -43,14 +43,14 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                        <ShieldCheck className="h-3 w-3 text-emerald-400" />
                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Transaction Verified</span>
                     </div>
-                    <h3 className="text-3xl font-black text-white tracking-tight">Invoice #{order.id.slice(-6).toUpperCase()}</h3>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">Invoice #{order.id.slice(-6).toUpperCase()}</h3>
                  </div>
               </div>
            </div>
 
-           <div className="p-10 space-y-10">
+           <div className="p-4 sm:p-6 md:p-10 space-y-6 md:space-y-10">
               {/* Strategic Details Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
                  {/* Identity Profile */}
                  <div className="space-y-6">
                     <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                        <div className="h-1 w-4 rounded-full bg-secondary" />
                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Deployment Status</h4>
                     </div>
-                    <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm space-y-6">
+                    <div className="p-4 sm:p-6 md:p-8 rounded-2xl lg:rounded-[2rem] bg-white border border-slate-100 shadow-sm space-y-6">
                        <div className="flex items-center justify-between">
                           <StatusBadge status={order.status.toLowerCase() as any} className="px-5 py-2.5" />
                           <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                     <div className="h-1 w-4 rounded-full bg-secondary" />
                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Acquisition Manifest</h4>
                  </div>
-                 <div className="p-8 rounded-[2rem] bg-slate-950 text-white shadow-2xl overflow-hidden relative group">
+                 <div className="p-4 sm:p-6 md:p-8 rounded-2xl lg:rounded-[2rem] bg-slate-950 text-white shadow-2xl overflow-hidden relative group">
                     <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                        <div className="md:h-24 md:w-24 h-40 w-full rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-1 flex items-center justify-center overflow-hidden transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2">
@@ -144,7 +144,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                     <div className="h-1 w-4 rounded-full bg-secondary" />
                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Personal Signature</h4>
                  </div>
-                 <div className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
+                 <div className="p-4 sm:p-6 md:p-10 rounded-2xl lg:rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-1000">
                        <MessageSquare size={120} />
                     </div>

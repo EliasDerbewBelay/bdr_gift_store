@@ -116,14 +116,14 @@ export default function ProductManagement({ initialProducts, categories }: Produ
               Initialize New Entry
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
-             <div className="max-h-[90vh] overflow-y-auto scrollbar-hide px-8 py-10">
-                <DialogHeader className="mb-8 px-2">
+          <DialogContent className="sm:max-w-[calc(100%-2rem)] md:max-w-[90vw] lg:max-w-4xl p-0 overflow-hidden border-none rounded-3xl lg:rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
+             <div className="max-h-[95vh] overflow-y-auto scrollbar-hide px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
+                <DialogHeader className="mb-6 md:mb-8 px-2">
                   <div className="flex items-center gap-2 mb-2">
                      <Package className="h-4 w-4 text-secondary" />
                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Database Entry</span>
                   </div>
-                  <DialogTitle className="text-3xl font-black text-slate-900 tracking-tight">
+                  <DialogTitle className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                     {editingProduct ? "Revise Collection Item" : "New Collection Addition"}
                   </DialogTitle>
                   <DialogDescription className="text-sm font-bold text-slate-500 mt-2">
