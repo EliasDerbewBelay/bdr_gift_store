@@ -1,10 +1,14 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-
-interface Column {
-  header: string;
-  accessor: string; // Not strictly used if using render function
-}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { SearchX } from "lucide-react";
 
 interface AdminTableProps<T> {
   data: T[];
@@ -19,46 +23,47 @@ export default function AdminTable<T>({
   columns, 
   renderRow, 
   className,
-  emptyMessage = "No data found."
+  emptyMessage = "No relevant records found in the database."
 }: AdminTableProps<T>) {
   return (
-    <div className={cn("bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden", className)}>
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50/50 border-b border-slate-100 uppercase tracking-wider">
+    <div className={cn("bg-white/50 backdrop-blur-xl rounded-[2.5rem] border border-slate-100 shadow-3xl shadow-slate-100/50 overflow-hidden", className)}>
+      <div className="overflow-x-auto scrollbar-hide">
+        <Table className="min-w-full">
+          <TableHeader>
+            <TableRow className="border-b border-slate-100 bg-slate-50/50 hover:bg-slate-50/50 h-16">
               {columns.map((col) => (
-                <th 
+                <TableHead 
                   key={col} 
-                  className="px-6 py-4 text-[11px] font-bold text-slate-500 whitespace-nowrap"
+                  className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] whitespace-nowrap"
                 >
                   {col}
-                </th>
+                </TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.length > 0 ? (
               data.map((item, index) => renderRow(item, index))
             ) : (
-              <tr>
-                <td 
+              <TableRow className="hover:bg-transparent border-none">
+                <TableCell 
                   colSpan={columns.length} 
-                  className="px-6 py-12 text-center text-slate-400 font-medium"
+                  className="px-8 py-24 text-center"
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
-                      <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                      </svg>
+                  <div className="flex flex-col items-center gap-6 max-w-xs mx-auto">
+                    <div className="w-20 h-20 rounded-[2rem] bg-slate-50 flex items-center justify-center border border-slate-100 shadow-inner group">
+                      <SearchX className="w-8 h-8 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    {emptyMessage}
+                    <div className="space-y-2">
+                       <h4 className="text-sm font-black text-slate-900 tracking-tight uppercase">System Null Result</h4>
+                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed uppercase tracking-wider">{emptyMessage}</p>
+                    </div>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

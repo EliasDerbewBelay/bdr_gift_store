@@ -1,9 +1,19 @@
 "use client";
 
 import React from "react";
-import { X, User, Phone, MessageSquare, Package, Calendar, CheckCircle2, Clock } from "lucide-react";
+import { X, User, Phone, MessageSquare, Package, Calendar, CheckCircle2, Clock, MapPin, Receipt, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "./StatusBadge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 interface OrderDetailModalProps {
   order: any;
@@ -13,117 +23,159 @@ interface OrderDetailModalProps {
 }
 
 export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatus }: OrderDetailModalProps) {
-  if (!isOpen || !order) return null;
+  if (!order) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
-      
-      {/* Modal Content */}
-      <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
-        {/* Header */}
-        <div className="px-6 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-              <Package size={20} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-800 tracking-tight">Order #{order.id.slice(-6).toUpperCase()}</h3>
-              <p className="text-xs font-medium text-slate-400 mt-0.5">{order.date}</p>
-            </div>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors"
-          >
-            <X size={20} />
-          </button>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
+        <div className="max-h-[90vh] overflow-y-auto scrollbar-hide">
+           {/* Header with Luxury Banner */}
+           <div className="relative h-32 bg-slate-950 flex items-center px-10 overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12">
+                 <Receipt className="h-40 w-40 text-white" />
+              </div>
+              <div className="relative z-10 flex items-center gap-6">
+                 <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-2xl">
+                    <Package className="h-8 w-8 text-secondary" />
+                 </div>
+                 <div>
+                    <div className="flex items-center gap-2 mb-1">
+                       <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Transaction Verified</span>
+                    </div>
+                    <h3 className="text-3xl font-black text-white tracking-tight">Invoice #{order.id.slice(-6).toUpperCase()}</h3>
+                 </div>
+              </div>
+           </div>
+
+           <div className="p-10 space-y-10">
+              {/* Strategic Details Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                 {/* Identity Profile */}
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                       <div className="h-1 w-4 rounded-full bg-secondary" />
+                       <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Client Profile</h4>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                       <div className="flex items-center gap-5 p-5 rounded-2xl bg-white border border-slate-100 shadow-sm transition-all hover:border-primary/20 cursor-default group">
+                          <div className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-950 group-hover:text-white transition-all duration-300">
+                             <User className="h-5 w-5" />
+                          </div>
+                          <div>
+                             <p className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">{order.customerName}</p>
+                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Full Identification</p>
+                          </div>
+                       </div>
+                       
+                       <div className="flex items-center gap-5 p-5 rounded-2xl bg-white border border-slate-100 shadow-sm transition-all hover:border-primary/20 cursor-default group">
+                          <div className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-950 group-hover:text-white transition-all duration-300">
+                             <Phone className="h-5 w-5" />
+                          </div>
+                          <div>
+                             <p className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">{order.customerPhone || order.phone}</p>
+                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Secure Contact Line</p>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+
+                 {/* Operational Status */}
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                       <div className="h-1 w-4 rounded-full bg-secondary" />
+                       <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Deployment Status</h4>
+                    </div>
+                    <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm space-y-6">
+                       <div className="flex items-center justify-between">
+                          <StatusBadge status={order.status.toLowerCase() as any} className="px-5 py-2.5" />
+                          <div className="flex items-center gap-2">
+                             <Clock className="h-3 w-3 text-slate-400" />
+                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{order.date}</span>
+                          </div>
+                       </div>
+                       
+                       <Separator className="bg-slate-50" />
+                       
+                       <div className="flex items-center gap-3 text-slate-400 text-xs font-bold px-2 italic">
+                          <MapPin className="h-4 w-4 shrink-0" />
+                          Pending logistical clearance for finalized destination.
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Manifest Item */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-3">
+                    <div className="h-1 w-4 rounded-full bg-secondary" />
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Acquisition Manifest</h4>
+                 </div>
+                 <div className="p-8 rounded-[2rem] bg-slate-950 text-white shadow-2xl overflow-hidden relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                       <div className="md:h-24 md:w-24 h-40 w-full rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-1 flex items-center justify-center overflow-hidden transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2">
+                          <img 
+                            src={order.productImage || "https://placehold.co/100"} 
+                            alt="" 
+                            className="w-full h-full object-cover rounded-xl" 
+                          />
+                       </div>
+                       <div className="flex-1 text-center md:text-left space-y-2">
+                          <Badge variant="outline" className="text-[8px] font-black uppercase tracking-[0.2em] border-secondary/30 text-secondary bg-secondary/5 mb-1 px-3">
+                             Premium Collection
+                          </Badge>
+                          <h5 className="text-2xl font-black text-white tracking-tight leading-none capitalize">
+                            {order.productName || order.product?.title || order.product}
+                          </h5>
+                          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.15em]">{order.category?.name || "Artisanal Gifting"}</p>
+                       </div>
+                       <div className="md:text-right text-center space-y-1 bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm min-w-[160px]">
+                          <p className="text-2xl font-black text-secondary leading-none">{order.price || "N/A"}</p>
+                          <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">Unit Valuation</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Personal Signature */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-3">
+                    <div className="h-1 w-4 rounded-full bg-secondary" />
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Personal Signature</h4>
+                 </div>
+                 <div className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-1000">
+                       <MessageSquare size={120} />
+                    </div>
+                    <p className="text-lg font-bold text-slate-600 leading-relaxed italic relative z-10">
+                       "{order.customMessage || "No specialized instruction or message was provided with this acquisition manifest."}"
+                    </p>
+                 </div>
+              </div>
+
+              {/* Operation Controls */}
+              <div className="flex flex-col sm:flex-row gap-5 pt-4">
+                 <Button
+                   size="lg"
+                   onClick={() => onUpdateStatus?.(order.id, "COMPLETED")}
+                   className="flex-1 h-16 rounded-2xl bg-slate-950 hover:bg-slate-900 text-white font-black uppercase text-[11px] tracking-widest shadow-2xl transition-all hover:translate-y-[-2px] group"
+                 >
+                    <CheckCircle2 className="mr-3 h-5 w-5 text-secondary group-hover:scale-110 transition-transform" />
+                    Finalize Fulfillment
+                 </Button>
+                 <Button
+                   size="lg"
+                   variant="outline"
+                   onClick={onClose}
+                   className="flex-1 h-16 rounded-2xl border-slate-100 bg-white text-slate-500 font-black uppercase text-[11px] tracking-widest hover:bg-slate-50 hover:text-slate-900 transition-all"
+                 >
+                    Abort Interface
+                 </Button>
+              </div>
+           </div>
         </div>
-
-        {/* Body */}
-        <div className="p-6 lg:p-8 overflow-y-auto max-h-[70vh] space-y-8">
-          {/* Customer & Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Customer Information</h4>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 text-slate-700">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
-                    <User size={16} />
-                  </div>
-                  <span className="text-sm font-semibold">{order.customerName}</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
-                    <Phone size={16} />
-                  </div>
-                  <span className="text-sm font-semibold">{order.customerPhone || order.phone}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Order Status</h4>
-              <div className="flex items-center gap-3">
-                <StatusBadge status={order.status.toLowerCase() as any} className="px-4 py-2 text-sm" />
-                <button className="text-xs font-bold text-indigo-600 hover:underline">Change Status</button>
-              </div>
-            </div>
-          </div>
-
-          <div className="h-[1px] bg-slate-50" />
-
-          {/* Product Details */}
-          <div className="space-y-4">
-            <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Items Ordered</h4>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 p-1 flex items-center justify-center overflow-hidden">
-                <img src={order.productImage || "https://placehold.co/100"} alt="" className="w-full h-full object-cover rounded-lg" />
-              </div>
-              <div>
-                <h5 className="font-bold text-slate-800">{order.productName || order.product?.title || order.product}</h5>
-                <p className="text-xs text-slate-500 mt-1 capitalize">{order.category?.name || "Gift Category"}</p>
-              </div>
-              <div className="ml-auto text-right">
-                <p className="text-sm font-bold text-slate-800">{order.price || "N/A"}</p>
-                <p className="text-[10px] text-slate-400 font-medium">Qty: 1</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Custom Message */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <MessageSquare size={16} className="text-indigo-500" />
-              <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Customization Message</h4>
-            </div>
-            <div className="p-6 rounded-2xl bg-indigo-50/30 border border-indigo-50 italic text-slate-600 text-sm leading-relaxed">
-              "{order.customMessage || "No custom message provided."}"
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-6 border-t border-slate-50 bg-slate-50/50 flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={() => onUpdateStatus?.(order.id, "completed")}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all"
-          >
-            <CheckCircle2 size={18} />
-            Mark as Completed
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 px-6 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all"
-          >
-            Close Detail
-          </button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

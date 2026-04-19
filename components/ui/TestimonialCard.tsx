@@ -1,7 +1,9 @@
 "use client";
-import Image from "next/image";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface TestimonialCardProps {
   id: number;
@@ -29,61 +31,69 @@ export default function TestimonialCard({
   index,
 }: TestimonialCardProps) {
   return (
-    <motion.button
-      onClick={() => onClick(id)}
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={`text-left p-5 rounded-xl transition-all duration-300 ${
-        isActive
-          ? "bg-amber-500 shadow-lg"
-          : "bg-white hover:bg-slate-50 shadow-md hover:shadow-lg"
-      }`}
     >
-      <div className="flex items-center gap-3 mb-3">
-        <div
-          className={`relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 ${
-            isActive ? "border-white" : "border-amber-500"
-          }`}
-        >
-          <Image src={image} alt={name} fill className="object-cover" />
-        </div>
-        <div>
-          <h5
-            className={`font-semibold text-sm ${
-              isActive ? "text-white" : "text-slate-900"
-            }`}
-          >
-            {name}
-          </h5>
-          <div className="flex items-center gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3 h-3 ${
-                  i < rating
-                    ? isActive
-                      ? "text-white fill-white"
-                      : "text-amber-500 fill-amber-500"
-                    : isActive
-                      ? "text-white/40"
-                      : "text-slate-300"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      <p
-        className={`text-xs line-clamp-3 ${
-          isActive ? "text-white/90" : "text-slate-600"
-        }`}
+      <Card 
+        onClick={() => onClick(id)}
+        className={cn(
+          "text-left cursor-pointer transition-all duration-500 rounded-3xl overflow-hidden border-2",
+          isActive 
+            ? "bg-primary text-primary-foreground border-primary shadow-2xl shadow-primary/20" 
+            : "bg-white hover:bg-slate-50 border-slate-100 shadow-xl shadow-slate-200/50"
+        )}
       >
-        "{content}"
-      </p>
-    </motion.button>
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center gap-4">
+            <Avatar className={cn(
+              "h-12 w-12 border-2 shadow-sm",
+              isActive ? "border-white/20" : "border-secondary/20"
+            )}>
+              <AvatarImage src={image} className="object-cover" />
+              <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                {name.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex flex-col">
+              <h5 className="font-bold text-sm leading-none mb-1">{name}</h5>
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={cn(
+                      "w-3 h-3",
+                      i < rating
+                        ? isActive ? "text-amber-400 fill-amber-400" : "text-secondary fill-secondary"
+                        : isActive ? "text-white/20" : "text-slate-200"
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <p className={cn(
+            "text-xs leading-relaxed line-clamp-3 font-medium italic",
+            isActive ? "text-primary-foreground/90" : "text-slate-500"
+          )}>
+            "{content}"
+          </p>
+          
+          <div className={cn(
+            "text-[10px] font-bold uppercase tracking-widest pt-2 flex justify-between",
+            isActive ? "text-primary-foreground/60" : "text-slate-400"
+          )}>
+            <span>{role}</span>
+            <span>{date}</span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }

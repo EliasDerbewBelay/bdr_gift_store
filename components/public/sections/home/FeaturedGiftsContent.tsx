@@ -3,6 +3,8 @@ import { useState } from "react";
 import { ArrowRight, Gift, Truck, Shield } from "lucide-react";
 import GiftCard from "@/components/ui/GiftCard";
 import QuickViewCard from "@/components/ui/QuickViewCard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface FeaturedGiftsContentProps {
   products: any[];
@@ -42,29 +44,31 @@ export default function FeaturedGiftsContent({ products }: FeaturedGiftsContentP
   };
 
   return (
-    <section className="relative w-full py-16 sm:py-20 lg:py-24 overflow-hidden">
-      <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+    <section className="relative w-full py-20 sm:py-24 overflow-hidden bg-white">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center space-y-4 mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-full">
-            <Gift className="w-4 h-4 text-amber-600" />
-            <span className="text-amber-700 text-sm font-semibold tracking-wider uppercase">
-              Handpicked For You
-            </span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 px-2">
+          <div className="space-y-4 max-w-2xl text-left">
+            <Badge variant="outline" className="px-4 py-1 border-primary/20 text-primary font-bold uppercase tracking-widest bg-primary/5">
+              Handpicked Selection
+            </Badge>
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">
+              Featured Gift Selection
+            </h2>
+            <p className="text-slate-500 text-lg font-medium">
+              Discover our most loved gifts, carefully selected for every special moment and delivered with elegance.
+            </p>
           </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
-            Featured Gift Selection
-          </h2>
-
-          <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto">
-            Discover our most loved gifts, carefully selected for every special
-            moment
-          </p>
+          
+          <Button variant="ghost" asChild className="font-bold text-primary group hidden md:flex rounded-full px-6">
+            <a href="/gifts">
+              Browse All <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+            </a>
+          </Button>
         </div>
 
         {/* Featured Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {products.map((product) => (
             <GiftCard
               key={product.id}
@@ -81,50 +85,45 @@ export default function FeaturedGiftsContent({ products }: FeaturedGiftsContentP
         </div>
 
         {/* Features Banner */}
-        <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div className="flex items-center gap-3 p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-slate-200">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Truck className="w-5 h-5 text-amber-600" />
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="flex items-center gap-5 p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-secondary shadow-sm group-hover:scale-110 transition-transform">
+              <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                Free Shipping
-              </h4>
-              <p className="text-xs text-slate-600">On orders over ETB 1,000</p>
+              <h4 className="font-bold text-slate-900 text-base">Free Shipping</h4>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Orders over ETB 1,000</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-slate-200">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-amber-600" />
+          <div className="flex items-center gap-5 p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-secondary shadow-sm group-hover:scale-110 transition-transform">
+              <Shield className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                Secure Payment
-              </h4>
-              <p className="text-xs text-slate-600">100% secure transactions</p>
+              <h4 className="font-bold text-slate-900 text-base">Secure Payment</h4>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">100% Secure Process</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-slate-200">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Gift className="w-5 h-5 text-amber-600" />
+          <div className="flex items-center gap-5 p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-secondary shadow-sm group-hover:scale-110 transition-transform">
+              <Gift className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                Gift Wrapping
-              </h4>
-              <p className="text-xs text-slate-600">Available on all orders</p>
+              <h4 className="font-bold text-slate-900 text-base">Gift Wrapping</h4>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Available on Request</p>
             </div>
           </div>
         </div>
 
-        {/* View All Link */}
-        <div className="text-center mt-12 sm:mt-16">
-          <a href="/gifts" className="group inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-semibold px-6 py-3 transition-all">
-            Browse All Featured Gifts
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
+        {/* Mobile View All */}
+        <div className="text-center mt-12 md:hidden">
+          <Button variant="outline" asChild className="rounded-full px-8 py-6 h-auto font-bold border-secondary text-secondary">
+             <a href="/gifts">
+                View All Featured Gifts <ArrowRight className="ml-2 h-4 w-4" />
+             </a>
+          </Button>
         </div>
       </div>
 

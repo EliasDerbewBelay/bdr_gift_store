@@ -4,9 +4,30 @@ import React, { useState } from "react";
 import AdminTable from "@/components/admin/AdminTable";
 import ProductForm from "@/components/admin/ProductForm";
 import StatusBadge from "@/components/admin/StatusBadge";
-import { Plus, Search, Edit3, Trash2, ChevronLeft } from "lucide-react";
+import { Plus, Search, Edit3, Trash2, ChevronLeft, Package, Filter, MoreHorizontal, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { upsertProduct, deleteProduct } from "@/lib/actions/admin";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { TableRow, TableCell } from "@/components/ui/table";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ProductManagementProps {
   initialProducts: any[];
@@ -14,23 +35,23 @@ interface ProductManagementProps {
 }
 
 export default function ProductManagement({ initialProducts, categories }: ProductManagementProps) {
-  const [showForm, setShowForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Filtering logic
   const filteredProducts = initialProducts.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           p.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All Categories" || p.category.name === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || p.category.name === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const handleAddProduct = () => {
     setEditingProduct(null);
-    setShowForm(true);
+    setIsOpen(true);
   };
 
   const handleEditProduct = (product: any) => {
@@ -39,7 +60,7 @@ export default function ProductManagement({ initialProducts, categories }: Produ
         categoryName: product.category.name,
         images: product.images.map((img: any) => img.url)
     });
-    setShowForm(true);
+    setIsOpen(true);
   };
 
   const handleSaveProduct = async (data: any) => {
@@ -51,9 +72,10 @@ export default function ProductManagement({ initialProducts, categories }: Produ
         categoryName: data.category
       });
       if (result.success) {
-        setShowForm(false);
+        setIsOpen(false);
+        toast.success(editingProduct ? "Product updated successfully" : "Product created successfully");
       } else {
-        alert("Failed to save product");
+        toast.error("Failed to save product");
       }
     } finally {
       setIsSaving(false);
@@ -61,125 +83,159 @@ export default function ProductManagement({ initialProducts, categories }: Produ
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this product?")) {
+    if (confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
       const result = await deleteProduct(id);
-      if (!result.success) {
-        alert("Failed to delete product");
+      if (result.success) {
+        toast.success("Product deleted successfully");
+      } else {
+        toast.error("Failed to delete product");
       }
     }
   };
 
-  if (showForm) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setShowForm(false)}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
-            {editingProduct ? "Edit Product" : "Add New Product"}
-          </h2>
-        </div>
-        <ProductForm 
-          initialData={editingProduct} 
-          onSave={handleSaveProduct} 
-          onCancel={() => setShowForm(false)} 
-          isLoading={isSaving}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-slate-800 tracking-tight text-left">Products Catalog</h2>
-          <p className="text-sm text-slate-500 font-medium">Manage your gift items, prices, and stock status.</p>
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+      {/* Dynamic Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 px-2">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+             <div className="h-2 w-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_#fbbf24]" />
+             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Inventory Management</span>
+          </div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Products Catalog</h2>
+          <p className="text-slate-500 font-bold text-sm">Oversee your collection of high-end gift items and availability.</p>
         </div>
-        <button
-          onClick={handleAddProduct}
-          className="flex items-center justify-center gap-2 px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95"
-        >
-          <Plus size={20} />
-          Add New Product
-        </button>
+        
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button
+              onClick={handleAddProduct}
+              className="h-14 px-8 rounded-2xl font-black uppercase text-[11px] tracking-widest shadow-2xl shadow-primary/20 hover:translate-y-[-2px] transition-all group"
+            >
+              <Plus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-90" />
+              Initialize New Entry
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] shadow-4xl shadow-slate-900/20 bg-slate-50">
+             <div className="max-h-[90vh] overflow-y-auto scrollbar-hide px-8 py-10">
+                <DialogHeader className="mb-8 px-2">
+                  <div className="flex items-center gap-2 mb-2">
+                     <Package className="h-4 w-4 text-secondary" />
+                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Database Entry</span>
+                  </div>
+                  <DialogTitle className="text-3xl font-black text-slate-900 tracking-tight">
+                    {editingProduct ? "Revise Collection Item" : "New Collection Addition"}
+                  </DialogTitle>
+                  <DialogDescription className="text-sm font-bold text-slate-500 mt-2">
+                    Enter the specific details for this artisanal piece. All fields are encrypted and secure.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <ProductForm 
+                  initialData={editingProduct} 
+                  onSave={handleSaveProduct} 
+                  onCancel={() => setIsOpen(false)} 
+                  isLoading={isSaving}
+                />
+             </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Filters & Search - UI State handled here */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col md:flex-row gap-4 items-center">
-        <div className="relative flex-1 w-full">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input 
-            type="text" 
+      {/* Strategic Intelligence Filtering */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-2">
+        <div className="md:col-span-2 relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+          <Input 
+            placeholder="Search by title, description or identification code..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search products..." 
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-100 transition-all text-sm outline-hidden"
+            className="h-14 pl-12 pr-4 bg-white border-slate-100 rounded-2xl font-bold text-xs focus-visible:ring-primary/10 shadow-sm transition-all"
           />
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <select 
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="flex-1 md:w-48 px-4 py-3 rounded-xl bg-slate-50 border-none text-sm font-bold text-slate-600 outline-hidden cursor-pointer"
-          >
-            <option>All Categories</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
-            ))}
-          </select>
+        
+        <div className="relative">
+           <Select value={selectedCategory} onValueChange={(val) => val && setSelectedCategory(val)}>
+             <SelectTrigger className="h-14 rounded-2xl bg-white border-slate-100 font-black text-[10px] uppercase tracking-widest px-6 shadow-sm">
+               <div className="flex items-center gap-3">
+                  <Filter className="h-3 w-3 text-slate-400" />
+                  <SelectValue placeholder="All Sectors" />
+               </div>
+             </SelectTrigger>
+             <SelectContent className="rounded-[1.5rem] border-slate-100 shadow-2xl">
+                <SelectItem value="all" className="font-black text-[10px] uppercase tracking-widest py-3">All Sectors</SelectItem>
+                {categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.name} className="font-black text-[10px] uppercase tracking-widest py-3">
+                    {cat.name}
+                  </SelectItem>
+                ))}
+             </SelectContent>
+           </Select>
+        </div>
+
+        <div className="flex items-center gap-4">
+           <div className="flex-1 h-14 rounded-2xl bg-slate-950 text-white flex items-center justify-between px-6 shadow-xl">
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Results</span>
+              <span className="text-lg font-black text-secondary">{filteredProducts.length}</span>
+           </div>
         </div>
       </div>
 
-      {/* Products Table */}
+      {/* High-Performance Catalog Table */}
       <AdminTable
-        columns={["Product", "Category", "Price", "Actions"]}
+        columns={["Specimen", "Sector", "Valuation", "Operations"]}
         data={filteredProducts}
         renderRow={(product) => (
-          <tr key={product.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0 group">
-            <td className="px-6 py-5">
-              <div className="flex items-center gap-4 text-left">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden p-1 flex items-center justify-center">
+          <TableRow key={product.id} className="hover:bg-slate-50/50 transition-all duration-300 border-b border-slate-100 group">
+            <TableCell className="px-8 py-6">
+              <div className="flex items-center gap-6">
+                <div className="relative h-16 w-16 rounded-[1.25rem] bg-slate-100 border border-slate-200 p-1 overflow-hidden transition-transform duration-500 group-hover:scale-105 group-hover:rotate-2 shadow-sm">
                   <img 
                     src={product.images[0]?.url || "https://placehold.co/100"} 
                     alt="" 
-                    className="w-full h-full object-cover rounded-lg" 
+                    className="w-full h-full object-cover rounded-xl" 
                   />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800">{product.title}</h4>
-                  <p className="text-[11px] text-slate-400 font-medium mt-0.5 truncate max-w-[200px]">{product.description}</p>
+                  <h4 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-2">{product.title}</h4>
+                  <p className="text-[11px] font-bold text-slate-400 max-w-[280px] line-clamp-1">{product.description}</p>
                 </div>
               </div>
-            </td>
-            <td className="px-6 py-5">
-              <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{product.category.name}</span>
-            </td>
-            <td className="px-6 py-5 text-sm font-bold text-slate-700">
-              {product.price ? `ETB ${product.price.toLocaleString()}` : "FREE"}
-            </td>
-            <td className="px-6 py-5">
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => handleEditProduct(product)}
-                  className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
-                >
-                  <Edit3 size={16} />
-                </button>
-                <button 
-                  onClick={() => handleDelete(product.id)}
-                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                >
-                  <Trash2 size={16} />
-                </button>
+            </TableCell>
+            <TableCell className="px-8 py-6">
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-slate-100 bg-white/50 px-3 py-1">
+                {product.category.name}
+              </Badge>
+            </TableCell>
+            <TableCell className="px-8 py-6">
+              <div className="flex flex-col gap-0.5">
+                 <span className="text-xs font-black text-slate-900 tracking-tight">
+                   {product.price ? `ETB ${product.price.toLocaleString()}` : "COMPLIMENTARY"}
+                 </span>
+                 <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Market Value</span>
               </div>
-            </td>
-          </tr>
+            </TableCell>
+            <TableCell className="px-8 py-6">
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => handleEditProduct(product)}
+                  className="h-10 w-10 rounded-xl border-slate-100 bg-white text-slate-400 hover:text-primary hover:shadow-xl transition-all duration-300"
+                >
+                  <Edit3 size={15} />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => handleDelete(product.id)}
+                  className="h-10 w-10 rounded-xl border-slate-100 bg-white text-slate-400 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-100 hover:shadow-xl transition-all duration-300"
+                >
+                  <Trash2 size={15} />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
         )}
       />
     </div>

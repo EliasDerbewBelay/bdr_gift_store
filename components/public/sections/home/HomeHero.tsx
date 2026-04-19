@@ -1,13 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight,  Sparkles, } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 import HeroImage from "@/public/background/Hero-background.jpg";
+import { Button } from "@/components/ui/button";
 
 export default function HomeHero() {
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* Single Background Image */}
+      {/* Visual Background Layer */}
       <div className="absolute inset-0">
         <Image
           src={HeroImage}
@@ -18,98 +20,78 @@ export default function HomeHero() {
           sizes="100vw"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/90" />
 
-        {/* Radial Glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-40" />
+        {/* Radial Glow for Focus */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50" />
       </div>
 
-      {/* Animated Border Lines */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-        <div className="absolute top-0 bottom-0 left-0 w-px bg-gradient-to-b from-transparent via-amber-500/50 to-transparent" />
-        <div className="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-amber-500/50 to-transparent" />
-      </div>
+      {/* Modern Framing Lines */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent z-10" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent z-10" />
 
-      {/* Corner Decorations */}
-      <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-amber-500/30 rounded-tl-2xl" />
-      <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-amber-500/30 rounded-tr-2xl" />
-      <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-amber-500/30 rounded-bl-2xl" />
-      <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-amber-500/30 rounded-br-2xl" />
+      {/* Decorative Corners */}
+      <div className="absolute top-12 left-12 w-20 h-20 border-t border-l border-secondary/20 rounded-tl-3xl z-10 hidden sm:block" />
+      <div className="absolute top-12 right-12 w-20 h-20 border-t border-r border-secondary/20 rounded-tr-3xl z-10 hidden sm:block" />
 
-      {/* Content */}
-      <div className="relative h-screen flex flex-col items-center justify-center px-5 sm:px-6 lg:px-8">
-        {/* Top Tagline */}
-        <div className="absolute top-8 left-1/2 -translate-x-1/2">
-          <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md border border-amber-500/20 rounded-full px-4 py-2">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-amber-500 text-xs sm:text-sm tracking-wider">
-              BAHIR DAR GIFTS
+      {/* Main Hero Container */}
+      <div className="relative h-screen flex flex-col items-center justify-center px-6 lg:px-8 z-20">
+        {/* Floating Tagline */}
+        <div className="mb-10 animate-in fade-in slide-in-from-top-6 duration-1000">
+          <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-5 py-2.5 shadow-2xl">
+            <Sparkles className="w-3.5 h-3.5 text-secondary animate-pulse" />
+            <span className="text-secondary text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">
+              The Art of Gifting &bull; Bahir Dar
             </span>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          {/* Heading */}
-          <h1 className="space-y-3">
-            <span className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight block">
-              Discover
-              <span className="text-amber-500"> Unique</span>
+        {/* Hero Typography */}
+        <div className="max-w-6xl mx-auto text-center space-y-10">
+          <h1 className="flex flex-col gap-2 sm:gap-4 animate-in fade-in zoom-in-95 duration-1000">
+            <span className="text-white text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[0.9]">
+              Elevate Your <span className="text-secondary italic font-medium serif">Special</span>
             </span>
-            <span className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight block">
-              Gifts for Every
-            </span>
-            <span className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight block">
-              Special Moment
+            <span className="text-white text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[0.9]">
+              Moments with Elegance
             </span>
           </h1>
 
-          {/* Description with Line */}
-          <div className="flex items-center justify-center gap-6 max-w-3xl mx-auto">
-            <div className="hidden sm:block w-16 h-px bg-gradient-to-r from-transparent to-amber-500/50" />
-            <p className="text-gray-300 text-base sm:text-lg">
-              Curated collections delivered with elegance
+          <div className="flex items-center justify-center gap-6 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-secondary/30" />
+            <p className="text-slate-300 text-sm sm:text-lg font-medium tracking-wide">
+              Exquisite collections curated for the sophisticated giver
             </p>
-            <div className="hidden sm:block w-16 h-px bg-gradient-to-l from-transparent to-amber-500/50" />
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-secondary/30" />
           </div>
 
-          {/* Buttons with Unique Style */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-            <button className="group relative overflow-hidden bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-10 py-4 rounded-full transition-all hover:scale-105">
-              <span className="relative z-10 flex items-center gap-2">
+          {/* shadcn Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+            <Button size="lg" asChild className="h-14 px-10 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-base shadow-xl shadow-secondary/20 group">
+              <Link href="/gifts">
                 Explore Collection
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-            </button>
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+              </Link>
+            </Button>
 
-            <button className="relative group">
-              <span className="relative z-10 flex items-center justify-center gap-2 bg-transparent hover:bg-white/5 text-white font-medium px-10 py-4 rounded-full border border-white/20 transition-all hover:border-amber-500/50 backdrop-blur-sm">
+            <Button variant="outline" size="lg" asChild className="h-14 px-10 rounded-full bg-white/5 text-white border-white/20 hover:bg-white/10 hover:border-secondary/40 font-bold text-base backdrop-blur-md group">
+              <Link href="/catalog">
                 View Catalog
-              </span>
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/0 via-amber-500/30 to-amber-500/0 rounded-full opacity-0 group-hover:opacity-100 blur transition-opacity" />
-            </button>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Animation Styles */}
+      {/* Animated Subtle Background Effects */}
       <style jsx>{`
         @keyframes subtle-zoom {
-          0%,
-          100% {
-            transform: scale(1.05);
-          }
-          50% {
-            transform: scale(1.08);
-          }
+          0%, 100% { transform: scale(1.05); }
+          50% { transform: scale(1.1); }
         }
-
         .animate-subtle-zoom {
-          animation: subtle-zoom 20s ease-in-out infinite;
+          animation: subtle-zoom 25s ease-in-out infinite;
         }
       `}</style>
     </section>
